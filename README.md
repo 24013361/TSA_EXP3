@@ -1,6 +1,5 @@
 # Ex.No: 03   COMPUTE THE AUTO FUNCTION(ACF)
-Date: 
-
+Date: 19/5/26
 ### AIM:
 To Compute the AutoCorrelation Function (ACF) of the data for the first 35 lags to determine the model
 type to fit the data.
@@ -11,33 +10,59 @@ type to fit the data.
 4. Store the results in an array
 5. Represent the result in graphical representation as given below.
 ### PROGRAM:
+```
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
-import numpy as np
+# Load the dataset
+df = pd.read_csv('chennai_temperature_10years.csv')
 
-data = [3, 16, 156, 47, 246, 176, 233, 140, 130,
-101, 166, 201, 200, 116, 118, 247,
-209, 52, 153, 232, 128, 27, 192, 168, 208,
-187, 228, 86, 30, 151, 18, 254,
-76, 112, 67, 244, 179, 150, 89, 49, 83, 147, 90,
-33, 6, 158, 80, 35, 186, 127]
+# Display columns
+print("Columns in dataset:", df.columns)
 
+# Convert Date column to datetime
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Use Temperature column for ACF
+data = df['Temperature'].dropna().values
+
+# Parameters
+N = len(data)
 lags = range(35)
 
+autocorr_values = []
 
-#Pre-allocate autocorrelation table
+# Mean and Variance
+mean_data = np.mean(data)
+variance_data = np.var(data)
 
-#Mean
+# ACF Calculation
+for lag in lags:
+    if lag == 0:
+        autocorr_values.append(1)
+    else:
+        auto_cov = np.sum(
+            (data[:-lag] - mean_data) * (data[lag:] - mean_data)
+        ) / N
 
-#Variance
+        autocorr_values.append(auto_cov / variance_data)
 
-#Normalized data
+# Plot ACF
+plt.figure(figsize=(10, 6))
+plt.stem(lags, autocorr_values)
 
-#Go through lag components one-by-one
+plt.title('Autocorrelation Function (ACF) of Chennai Temperature')
+plt.xlabel('Lag')
+plt.ylabel('Autocorrelation')
 
-#display the graph
+plt.grid(True)
+plt.show()
+
+```
 
 ### OUTPUT:
+<img width="689" height="455" alt="Screenshot 2026-05-19 082221" src="https://github.com/user-attachments/assets/9dc71a45-1d83-45c7-adc9-40482e3a6acb" />
 
 ### RESULT:
-        Thus we have successfully implemented the auto correlation function in python.
+Thus we have successfully implemented the auto correlation function in python.
